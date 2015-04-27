@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "clockwork"
   s.add_dependency "thor"
+  s.add_dependency "sinatra"
   s.add_dependency "dotenv"
 
   s.files         = `git ls-files`.split("\n")

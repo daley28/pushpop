@@ -50,7 +50,10 @@ module Pushpop
       Dotenv.load
       require_file(options[:file])
       Pushpop.schedule
-      Clockwork.manager.run
+      t = Thread.new do
+        Clockwork.manager.run
+      end
+      Pushpop.start_webserver
     end
 
     private

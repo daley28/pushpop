@@ -4,6 +4,7 @@ require 'pushpop/version'
 require 'pushpop/job'
 require 'pushpop/step'
 require 'pushpop/cli'
+require 'pushpop/web'
 
 module Pushpop
   class << self
@@ -30,6 +31,10 @@ module Pushpop
       @@jobs
     end
 
+    def web
+      @web ||= Web.new
+    end
+
     # for jobs and steps
     def random_name
       (0...8).map { (65 + rand(26)).chr }.join
@@ -46,6 +51,12 @@ module Pushpop
 
     def schedule
       self.jobs.map &:schedule
+    end
+
+    def start_webserver
+      if @web
+        @web.start
+      end
     end
 
     def load_plugin(name)

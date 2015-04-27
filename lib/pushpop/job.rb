@@ -19,6 +19,7 @@ module Pushpop
 
     attr_accessor :name
     attr_accessor :period
+    attr_accessor :webhook_url
     attr_accessor :every_options
     attr_accessor :steps
 
@@ -32,6 +33,11 @@ module Pushpop
     def every(period, options={})
       self.period = period
       self.every_options = options
+    end
+
+    def webhook(url)
+      self.webhook_url = url
+      Pushpop.web.add_route(url, self)
     end
 
     def step(name=nil, plugin=nil, &block)
@@ -51,9 +57,12 @@ module Pushpop
     end
 
     def schedule
-      raise 'Set job period via "every"' unless self.period
-      Clockwork.manager.every(period, name, every_options) do
-        run
+      raise 'Set job period via "every"' unless self.period || self.webhook_url
+
+      if self.period
+        Clockwork.manager.every(period, name, every_options) do
+          run
+        end
       end
     end
 
