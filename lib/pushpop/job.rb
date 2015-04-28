@@ -20,6 +20,7 @@ module Pushpop
     attr_accessor :name
     attr_accessor :period
     attr_accessor :webhook_url
+    attr_accessor :webhook_proc
     attr_accessor :every_options
     attr_accessor :steps
 
@@ -35,9 +36,14 @@ module Pushpop
       self.every_options = options
     end
 
-    def webhook(url)
+    def webhook(url, &block)
+      raise 'Webhook is already set' if @webhook_url
+      raise 'Webhook must be set before steps' if self.steps.length > 0
+  
       self.webhook_url = url
-      Pushpop.web.add_route(url, self)
+      self.webhook_proc = block
+
+      Pushpop.web.add_route url, self
     end
 
     def step(name=nil, plugin=nil, &block)
@@ -57,7 +63,7 @@ module Pushpop
     end
 
     def schedule
-      raise 'Set job period via "every"' unless self.period || self.webhook_url
+      raise 'Set job period via "every"' unless self.period || @webhook_url
 
       if self.period
         Clockwork.manager.every(period, name, every_options) do
@@ -66,12 +72,7 @@ module Pushpop
       end
     end
 
-    def run
-
-      # track the last response, and all responses
-      last_response = nil
-      step_responses = {}
-
+    def run(last_response = nil, step_responses = {})
       self.steps.each do |step|
 
         # track the last_response and all responses

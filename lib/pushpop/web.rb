@@ -1,4 +1,5 @@
 require 'sinatra/base'
+require 'json'
 
 module Pushpop
   class Web
@@ -13,7 +14,20 @@ module Pushpop
 
     def add_route(url, job)
       runner = lambda do
-        job.run
+        response = self.instance_eval(&job.webhook_proc)
+
+        if response
+          {
+            status: 'success',
+            job: job.name
+          }.to_json
+        else
+          {
+            status: 'failed',
+            job: job.name,
+            message: 'webhook step did not [ass'
+          }.to_json
+        end
       end
 
       if url[0] != '/'
