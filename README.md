@@ -217,7 +217,7 @@ job do
   end
   step 'add previous steps' do |response, step_responses|
     puts response # prints 6
-    puts step_responses['one'] + step_responses['two'] # prints 6
+    puts step_responses['one'] + step_responses['two'] # prints 7
   end
 end
 ```
