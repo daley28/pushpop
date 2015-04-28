@@ -24,7 +24,7 @@ module Pushpop
 
     def describe_jobs
       Dotenv.load
-      require_file(options[:file])
+      Pushpop.require_file(options[:file])
       Pushpop.jobs.tap do |jobs|
         jobs.each do |job|
           puts job.name
@@ -38,7 +38,7 @@ module Pushpop
 
     def run_jobs_once
       Dotenv.load
-      require_file(options[:file])
+      Pushpop.require_file(options[:file])
       Pushpop.run
     end
 
@@ -48,32 +48,11 @@ module Pushpop
 
     def run_jobs
       Dotenv.load
-      require_file(options[:file])
+      Pushpop.require_file(options[:file])
       Pushpop.schedule
-      t = Thread.new do
-        Clockwork.manager.run
-      end
+      Pushpop.start_clock
       Pushpop.start_webserver
     end
-
-    private
-
-    def require_file(file)
-      if file
-        if File.directory?(file)
-          Dir.glob("#{file}/**/*.rb").each { |file|
-            load "#{Dir.pwd}/#{file}"
-          }
-        else
-          load file
-        end
-      else
-        Dir.glob("#{Dir.pwd}/jobs/**/*.rb").each { |file|
-          load file
-        }
-      end
-    end
-
   end
 end
 
