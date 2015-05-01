@@ -36,8 +36,15 @@ module Pushpop
     end
 
     def start_webserver
-      if @web
-        @web.app.run!
+      # If we start this thread with no routes, it will throw off the all_waits listener
+      # and we don't want to start the web server willy nilly, because it looks weird
+      # on the CLI interface
+      if web.routes.length > 0
+        Thread.new do
+          @web.app.run!
+        end
+      else
+        false
       end
     end
 
@@ -60,10 +67,9 @@ module Pushpop
     end
 
     def start_clock
-      t = Thread.new do
+      Thread.new do
         Clockwork.manager.run
       end
-      #t.join
     end
 
     def require_file(file = nil)

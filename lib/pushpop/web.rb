@@ -8,6 +8,10 @@ module Pushpop
       Sinatra::Application
     end
 
+    def routes
+      @routes ||= []
+    end
+
     def add_route(url, job)
       runner = lambda do
         response = self.instance_eval(&job.webhook_proc)
@@ -30,11 +34,11 @@ module Pushpop
         url = "/#{url}"
       end
       
-      puts "adding route #{url}"
-
       Sinatra::Application.get  url, &runner
       Sinatra::Application.post url, &runner
       Sinatra::Application.put  url, &runner
+
+      routes.push(url)
     
     end
   end

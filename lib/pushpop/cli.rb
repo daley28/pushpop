@@ -1,6 +1,7 @@
 require 'thor'
 require 'dotenv'
 require 'pushpop'
+require 'thwait'
 
 module Pushpop
   class CLI < Thor
@@ -50,8 +51,29 @@ module Pushpop
       Dotenv.load
       Pushpop.require_file(options[:file])
       Pushpop.schedule
-      Pushpop.start_clock
-      Pushpop.start_webserver
+
+      threads = []
+      threads << Pushpop.start_clock
+
+      Pushpop.web.app.traps = false
+      web_thread = Pushpop.start_webserver
+      threads << web_thread if web_thread
+
+      # Listen to exit signals, so the CLI doesn't hang infinitely on clock
+      [:INT, :TERM].each do |signal|
+        trap(signal) do
+          threads.each do |thread|
+            thread.exit
+          end
+        end
+      end
+
+      # Wait for both the clock thread and the sinatra thread to close before exiting
+      ThreadsWait.all_waits(threads) do
+        threads.each do |thread|
+          thread.exit
+        end
+      end
     end
   end
 end
