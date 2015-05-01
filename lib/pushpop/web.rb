@@ -3,13 +3,9 @@ require 'json'
 
 module Pushpop
   class Web
-    
-    def initialize
-      @app = Sinatra.new
-    end
 
-    def start
-      @app.run! unless @app.running?
+    def app
+      Sinatra::Application
     end
 
     def add_route(url, job)
@@ -25,7 +21,7 @@ module Pushpop
           {
             status: 'failed',
             job: job.name,
-            message: 'webhook step did not [ass'
+            message: 'webhook step did not pass'
           }.to_json
         end
       end
@@ -33,10 +29,12 @@ module Pushpop
       if url[0] != '/'
         url = "/#{url}"
       end
+      
+      puts "adding route #{url}"
 
-      @app.get  url, &runner
-      @app.post url, &runner
-      @app.put  url, &runner
+      Sinatra::Application.get  url, &runner
+      Sinatra::Application.post url, &runner
+      Sinatra::Application.put  url, &runner
     
     end
   end

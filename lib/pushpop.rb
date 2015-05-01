@@ -35,6 +35,12 @@ module Pushpop
       @web ||= Web.new
     end
 
+    def start_webserver
+      if @web
+        @web.app.run!
+      end
+    end
+
     # for jobs and steps
     def random_name
       (0...8).map { (65 + rand(26)).chr }.join
@@ -53,16 +59,11 @@ module Pushpop
       self.jobs.map &:schedule
     end
 
-    def start_webserver
-      if @web
-        @web.start
-      end
-    end
-
     def start_clock
-      Thread.new do
+      t = Thread.new do
         Clockwork.manager.run
       end
+      #t.join
     end
 
     def require_file(file = nil)
