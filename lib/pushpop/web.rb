@@ -13,6 +13,13 @@ module Pushpop
     end
 
     def add_route(url, job)
+
+      if url[0] != '/'
+        url = "/#{url}"
+      end
+
+      raise "Route #{url} is already set up as a webhook" if routes.include?(url)
+
       runner = lambda do
         response = self.instance_eval(&job.webhook_proc)
 
@@ -28,10 +35,6 @@ module Pushpop
             message: 'webhook step did not pass'
           }.to_json
         end
-      end
-
-      if url[0] != '/'
-        url = "/#{url}"
       end
       
       Sinatra::Application.get  url, &runner
