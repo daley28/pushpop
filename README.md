@@ -196,6 +196,26 @@ every 1.week, at: 'Monday 12:30'
 
 See the full range of possibilities on the [Clockwork README](https://github.com/tomykaira/clockwork#event-parameters).
 
+##### Webhooks
+
+Jobs can also be triggered via a webhook, instead of scheduling via `every`. Simply use `webhook` instead of `every`, and pass in a path that should trigger that job. `webhook` also accepts a block, which becomes the first step of the job.
+
+``` ruby
+webhook '/trigger' do
+  if params[:secret] == '12345'
+    params[:name]
+  else
+    false # Returning false cancels the job
+  end
+end
+```
+
+The webhooks are simply a [Sinatra](http://www.sinatrarb.com) app under the hood, so you can reuse a lot of the features that are built-in to Sinatra. Their [routing features](http://www.sinatrarb.com/intro.html#Routes) work out of the box. The webhook block that gets called for every request is also run in the [Sinatra request scope](http://www.sinatrarb.com/intro.html#Request/Instance%20Scope), so you can access the full app (via `settings`), and request params via `params`.
+
+The return value of the webhook block will be passed in as `response` for the first step, and will be stored under `step_responses['webhook']` for all future steps.
+
+*You may want to read about running a [custom HTTP server](#custom-http-server-for-webhooks) if you're going to be using webhooks in production.*
+
 ##### Job workflow
 
 When a job kicks off, steps are run serially in the order they are specified. Each step is invoked with 2
@@ -267,6 +287,7 @@ end
 
 In this example, the `twilio` step will only be ran if the `keen` step returned a count greater than 0.
 
+
 #### Steps
 
 Steps have the following attributes:
@@ -298,6 +319,43 @@ Here's a very simple template that uses the `response` variable in context:
 ``` erb
 <h1>Daily Report</h1>
 <p>We got <%= response %> new users today!</p>
+```
+
+## Custom HTTP Server for Webhooks
+
+If you're running Pushpop locally, you can continue to use the CLI for running jobs - `jobs:run` will start the Sinatra app internally if you have any webhooks configured. However, running the app with the CLI in a production environment may not scale well. If your webhooks are going to be hit rapidly in production, you may want to use a beefier HTTP server than the default [WEBrick](http://ruby-doc.org/stdlib-1.9.3/libdoc/webrick/rdoc/WEBrick.html) built in to Ruby.
+
+Here's an example of getting Pushpop running on [Unicorn](http://unicorn.bogomips.org/)
+
+**unicorn.rb**
+
+``` ruby
+require 'pushpop'
+
+# Set this to whatever you want.
+worker_processes 2
+
+# This loads all of the job files in /jobs
+Pushpop.load_jobs
+
+# This configures Clockwork for any scheduled jobs you have.
+# You can omit this if all you are using is Webhooks
+Pushpop.schedule 
+
+# This tells Clockwork to actually start running jobs
+# You can omit this if all you are using is Webhooks
+Pushpop.start_clock
+```
+
+**config.ru**
+``` ruby
+# This tells Unicorn what to run whenever it starts up a worker..  which is the Pushpop web app
+run Pushpop.web.app
+```
+
+And then to run it, just do:
+``` bash
+unicorn -c unicorn.rb
 ```
 
 ## Recipes

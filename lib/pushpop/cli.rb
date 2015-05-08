@@ -1,6 +1,7 @@
 require 'thor'
 require 'dotenv'
 require 'pushpop'
+require 'thwait'
 
 module Pushpop
   class CLI < Thor
@@ -24,7 +25,7 @@ module Pushpop
 
     def describe_jobs
       Dotenv.load
-      require_file(options[:file])
+      Pushpop.require_file(options[:file])
       Pushpop.jobs.tap do |jobs|
         jobs.each do |job|
           puts job.name
@@ -38,7 +39,7 @@ module Pushpop
 
     def run_jobs_once
       Dotenv.load
-      require_file(options[:file])
+      Pushpop.require_file(options[:file])
       Pushpop.run
     end
 
@@ -48,29 +49,32 @@ module Pushpop
 
     def run_jobs
       Dotenv.load
-      require_file(options[:file])
+      Pushpop.require_file(options[:file])
       Pushpop.schedule
-      Clockwork.manager.run
-    end
 
-    private
+      threads = []
+      threads << Pushpop.start_clock
 
-    def require_file(file)
-      if file
-        if File.directory?(file)
-          Dir.glob("#{file}/**/*.rb").each { |file|
-            load "#{Dir.pwd}/#{file}"
-          }
-        else
-          load file
+      Pushpop.web.app.traps = false
+      web_thread = Pushpop.start_webserver
+      threads << web_thread if web_thread
+
+      # Listen to exit signals, so the CLI doesn't hang infinitely on clock
+      [:INT, :TERM].each do |signal|
+        trap(signal) do
+          threads.each do |thread|
+            thread.exit
+          end
         end
-      else
-        Dir.glob("#{Dir.pwd}/jobs/**/*.rb").each { |file|
-          load file
-        }
+      end
+
+      # Wait for both the clock thread and the sinatra thread to close before exiting
+      ThreadsWait.all_waits(threads) do
+        threads.each do |thread|
+          thread.exit
+        end
       end
     end
-
   end
 end
 

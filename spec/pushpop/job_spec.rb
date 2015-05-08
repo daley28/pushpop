@@ -37,6 +37,29 @@ describe Pushpop::Job do
     end
   end
 
+  describe '#webhook' do
+    it 'sets the webhook url and proc' do
+      job = empty_job
+      empty_proc = Proc.new{}
+      job.webhook('/test', &empty_proc)
+      expect(job.webhook_url).to eq('/test')
+      expect(job.webhook_proc.class).to be(Proc)
+    end
+
+    it 'raises an error if webhook is already set' do
+      job = empty_job
+      job.webhook('/test1')
+      expect{ job.webhook('/test2') }.to raise_error
+    end
+
+    it 'raises an error if any steps have been created' do
+      job = empty_job
+      empty_proc = Proc.new{}
+      job.step('test', &empty_proc)
+      expect{job.webhook('/test')}.to raise_error
+    end
+  end
+
   describe '#step' do
     it 'adds the step to the internal list of steps' do
       empty_proc = Proc.new {}
@@ -108,11 +131,24 @@ describe Pushpop::Job do
       expect(simple_job.run.first).to eq(4)
     end
 
-     it 'fails if the period was not specified' do
+     it 'fails if neither period nor webhook  was not specified' do
        simple_job = Pushpop::Job.new('foo') do end
        expect {
          simple_job.schedule
        }.to raise_error
+
+       simple_job.period = 5.seconds
+
+       expect {
+         simple_job.schedule
+       }.not_to raise_error
+
+       simple_job.period = nil
+       simple_job.webhook_url = '/test'
+
+       expect {
+         simple_job.schedule
+       }.not_to raise_error
      end
   end
 

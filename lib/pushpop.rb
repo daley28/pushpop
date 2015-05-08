@@ -4,6 +4,7 @@ require 'pushpop/version'
 require 'pushpop/job'
 require 'pushpop/step'
 require 'pushpop/cli'
+require 'pushpop/web'
 
 module Pushpop
   class << self
@@ -30,6 +31,23 @@ module Pushpop
       @@jobs
     end
 
+    def web
+      @web ||= Web.new
+    end
+
+    def start_webserver
+      # If we start this thread with no routes, it will throw off the all_waits listener
+      # and we don't want to start the web server willy nilly, because it looks weird
+      # on the CLI interface
+      if web.routes.length > 0
+        Thread.new do
+          @web.app.run!
+        end
+      else
+        false
+      end
+    end
+
     # for jobs and steps
     def random_name
       (0...8).map { (65 + rand(26)).chr }.join
@@ -47,6 +65,29 @@ module Pushpop
     def schedule
       self.jobs.map &:schedule
     end
+
+    def start_clock
+      Thread.new do
+        Clockwork.manager.run
+      end
+    end
+
+    def require_file(file = nil)
+      if file
+        if File.directory?(file)
+          Dir.glob("#{file}/**/*.rb").each { |file|
+            load "#{Dir.pwd}/#{file}"
+          }
+        else
+          load file
+        end
+      else
+        Dir.glob("#{Dir.pwd}/jobs/**/*.rb").each { |file|
+          load file
+        }
+      end
+    end
+    alias :load_jobs :require_file 
 
     def load_plugin(name)
       load "#{File.expand_path("../plugins/#{name}", __FILE__)}.rb"
