@@ -4,7 +4,7 @@ module Pushpop
 
   class Step
 
-    TEMPLATES_DIRECTORY = File.expand_path('../../../templates', __FILE__)
+    TEMPLATES_DIRECTORY = File.expand_path('templates', Dir.pwd)
 
     class ERBContext
       attr_accessor :response
