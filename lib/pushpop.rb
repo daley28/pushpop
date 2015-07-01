@@ -41,7 +41,11 @@ module Pushpop
       # on the CLI interface
       if web.routes.length > 0
         Thread.new do
-          @web.app.run!
+          if ENV['PORT']
+            @web.app.run! :port => ENV['PORT']
+          else
+            @web.app.run!
+          end
         end
       else
         false
