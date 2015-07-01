@@ -24,6 +24,8 @@ module Pushpop
         response = self.instance_eval(&job.webhook_proc)
 
         if response
+          job.run(response, {'webhook' => response}) 
+
           {
             status: 'success',
             job: job.name
