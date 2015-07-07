@@ -26,16 +26,21 @@ module Pushpop
         if response
           job.run(response, {'webhook' => response}) 
 
-          {
+          status_resp = {
             status: 'success',
             job: job.name
           }.to_json
         else
-          {
+          status_resp = {
             status: 'failed',
             job: job.name,
             message: 'webhook step did not pass'
           }.to_json
+        end
+
+        # The user can set the body manually.. If they did that, defer to their response
+        if self.response.body.empty?
+          status_resp
         end
       end
       
