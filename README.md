@@ -372,13 +372,13 @@ There are a number of existing plugins for additional services, both from the Pu
 * pushpop-file: [github](https://github.com/pushpop-project/pushpop-file), [rubygems](https://rubygems.org/gems/pushpop-file)
 * pushpop-github: [github](https://github.com/pushpop-project/pushpop-github), [rubygems](https://rubygems.org/gems/pushpop-github)
 * pushpop-github-status: [github](https://github.com/willbarrett/pushpop-github-status), [rubygems](https://rubygems.org/gems/pushpop-github-status)
-* pushpop-keen: [github](https://github.com/pushpop-project/pushpop-keen), [rubygems](githu://rubygems.org/gems/pushpop-keen)
+* pushpop-keen: [github](https://github.com/pushpop-project/pushpop-keen), [rubygems](https://rubygems.org/gems/pushpop-keen)
 * pushpop-mixpanel: [github](https://github.com/pushpop-project/pushpop-mixpanel), [rubygems](https://rubygems.org/gems/pushpop-mixpanel)
 * pushpop-product-hunt: [github](https://github.com/pushpop-project/pushpop-product-hunt), [rubygems](https://rubygems.org/gems/pushpop-product-hunt)
 * pushpop-pusher: [github](https://github.com/pushpop-project/pushpop-pusher), [rubygems](https://rubygems.org/gems/pushpop-pusher)
 * pushpop-sendgrid: [github](https://github.com/pushpop-project/pushpop-sendgrid), [rubygems](https://rubygems.org/gems/pushpop-sendgrid)
 * pushpop-slack: [github](https://github.com/pushpop-project/pushpop-slack), [rubygems](https://rubygems.org/gems/pushpop-slack)
-* pushpop-twilio: [github](https://github.com/pushpop-project/pushpop-twilio), [rubygems](githu://rubygems.org/gems/pushpop-twilio)
+* pushpop-twilio: [github](https://github.com/pushpop-project/pushpop-twilio), [rubygems](https://rubygems.org/gems/pushpop-twilio)
 * pushpop-twitter: [github](https://github.com/pushpop-project/pushpop-twitter), [rubygems](https://rubygems.org/gems/pushpop-twitter)
 
 
