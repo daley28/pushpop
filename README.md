@@ -364,7 +364,6 @@ unicorn -c unicorn.rb
 The community-driven [pushpop-recipes](https://github.com/pushpop-project/pushpop-recipes) repository contains jobs and templates
 for doing common things with Pushpop. Check it out for some inspiration!
 
-<a name="plugins"></a>
 ## Plugins
 
 There are a number of existing plugins for additional services, both from the Pushpop team and from 3rd parties:
