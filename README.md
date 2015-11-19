@@ -17,7 +17,8 @@
 Use Pushpop to schedule and run ongoing integrations between your favorite services. With Pushpop you can easily say "send data from Service A to Service B every 5 minutes". The services and the interval are entirely configurable, and you can have as many steps as you like.
 
 Pushpop began as a way to send notifications and reports based on events captured with [Keen IO](https://keen.io).
-See plugins for more services on the [Pushpop organization](https://github.com/pushpop-project) home page.
+
+See the [Plugins](#plugins) section of this README for more services.
 
 Pushpop is packaged as a Ruby gem. It can be added to existing Ruby projects or used in new ones.
 
@@ -365,7 +366,20 @@ for doing common things with Pushpop. Check it out for some inspiration!
 
 ## Plugins
 
-Plugins are packaged as gems. See the [pushpop-project](https://github.com/pushpop-project) github organization for a sampling of popular plugins.
+There are a number of existing plugins for additional services, both from the Pushpop team and from 3rd parties:
+
+* pushpop-file: [github](https://github.com/pushpop-project/pushpop-file), [rubygems](https://rubygems.org/gems/pushpop-file)
+* pushpop-github: [github](https://github.com/pushpop-project/pushpop-github), [rubygems](https://rubygems.org/gems/pushpop-github)
+* pushpop-github-status: [github](https://github.com/willbarrett/pushpop-github-status), [rubygems](https://rubygems.org/gems/pushpop-github-status)
+* pushpop-keen: [github](https://github.com/pushpop-project/pushpop-keen), [rubygems](https://rubygems.org/gems/pushpop-keen)
+* pushpop-mixpanel: [github](https://github.com/pushpop-project/pushpop-mixpanel), [rubygems](https://rubygems.org/gems/pushpop-mixpanel)
+* pushpop-product-hunt: [github](https://github.com/pushpop-project/pushpop-product-hunt), [rubygems](https://rubygems.org/gems/pushpop-product-hunt)
+* pushpop-pusher: [github](https://github.com/pushpop-project/pushpop-pusher), [rubygems](https://rubygems.org/gems/pushpop-pusher)
+* pushpop-sendgrid: [github](https://github.com/pushpop-project/pushpop-sendgrid), [rubygems](https://rubygems.org/gems/pushpop-sendgrid)
+* pushpop-slack: [github](https://github.com/pushpop-project/pushpop-slack), [rubygems](https://rubygems.org/gems/pushpop-slack)
+* pushpop-twilio: [github](https://github.com/pushpop-project/pushpop-twilio), [rubygems](https://rubygems.org/gems/pushpop-twilio)
+* pushpop-twitter: [github](https://github.com/pushpop-project/pushpop-twitter), [rubygems](https://rubygems.org/gems/pushpop-twitter)
+
 
 ### Creating plugins
 
