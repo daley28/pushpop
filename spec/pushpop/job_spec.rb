@@ -49,14 +49,14 @@ describe Pushpop::Job do
     it 'raises an error if webhook is already set' do
       job = empty_job
       job.webhook('/test1')
-      expect{ job.webhook('/test2') }.to raise_error
+      expect{ job.webhook('/test2') }.to raise_error(RuntimeError)
     end
 
     it 'raises an error if any steps have been created' do
       job = empty_job
       empty_proc = Proc.new{}
       job.step('test', &empty_proc)
-      expect{job.webhook('/test')}.to raise_error
+      expect{job.webhook('/test')}.to raise_error(RuntimeError)
     end
   end
 
@@ -135,7 +135,7 @@ describe Pushpop::Job do
        simple_job = Pushpop::Job.new('foo') do end
        expect {
          simple_job.schedule
-       }.to raise_error
+       }.to raise_error(RuntimeError)
 
        simple_job.period = 5.seconds
 

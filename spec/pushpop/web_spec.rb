@@ -38,7 +38,7 @@ describe Pushpop::Web do
       empty_proc = Proc.new{}
 
       web.add_route('/test', empty_proc)
-      expect{web.add_route('/test', empty_proc)}.to raise_error
+      expect{web.add_route('/test', empty_proc)}.to raise_error(RuntimeError)
     end 
 
     it 'creates GET, POST, and PUT endpoints' do
