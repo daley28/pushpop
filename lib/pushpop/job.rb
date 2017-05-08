@@ -59,6 +59,13 @@ module Pushpop
     end
 
     def add_step(step)
+      # Ensure we don't have duplicate step names.
+      self.steps.each do |check_step|
+        if check_step.name == step.name
+          raise Pushpop::DuplicateStepNameError.new(step)
+        end
+      end
+
       self.steps.push(step)
     end
 
