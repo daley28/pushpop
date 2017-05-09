@@ -97,6 +97,44 @@ describe Pushpop::Job do
     end
   end
 
+  describe '#add_step' do
+    let(:job) { empty_job }
+    let(:empty_proc) { Proc.new {} }
+
+    context 'no existing steps' do
+      it 'adds a step' do
+        step = Pushpop::Step.new('step1', 'blaz', &empty_proc)
+        job.add_step(step)
+
+        expect(job.steps.length).to eq(1)
+        expect(job.steps.first.name).to eq(step.name)
+      end
+    end
+
+    context 'with existing steps' do
+      let(:step) { Pushpop::Step.new('step1', 'blaz', &empty_proc) }
+
+      before(:each) do
+        job.add_step(step)
+      end
+
+      it 'adds a step' do
+        step_two = Pushpop::Step.new('step2', 'blaz', &empty_proc)
+        job.add_step(step_two)
+
+        expect(job.steps.length).to eq(2)
+        expect(job.steps.first.name).to eq(step.name)
+        expect(job.steps.last.name).to eq(step_two.name)
+      end
+
+      it 'raises for duplicate step names' do
+        expect {
+          job.add_step(step)
+        }.to raise_error(Pushpop::DuplicateStepNameError)
+      end
+    end
+  end
+
   describe '#run' do
     it 'calls each step with the response to the previous' do
       job = Pushpop::Job.new('foo') do
